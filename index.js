@@ -94,6 +94,8 @@ window.onload = function() {
         document.getElementById("btnPlay").innerText = 'Stop';
       }
       
+      var noSleep = new NoSleep();
+      noSleep.enable();
       for (const mp3Info of mp3Arr) {
         try {
           document.getElementById('textNowPlaying').innerText = mp3Info[0];
@@ -111,6 +113,7 @@ window.onload = function() {
           console.error(e);
         }
       }
+      noSleep.disable();
   }  
   
   async function loadMySheetData() {
