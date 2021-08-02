@@ -137,7 +137,7 @@ window.onload = function() {
       var range = response.result; 
       localStorage.setItem(dataKey, JSON.stringify(range.values));
       localStorage.setItem(timeKey, todayStr);
-      return range;
+      return range.values;
     }
   }
 
