@@ -152,7 +152,7 @@ window.onload = function() {
         mp3Arr.push([phrase, pronunciationMp3, translation]);
       }
       
-      mp3Arr = shuffle(mp3Arr);
+      mp3Arr = shuffleArr(mp3Arr);
       playMp3List(mp3Arr);
     }
     catch(e) {
