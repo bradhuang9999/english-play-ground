@@ -27,12 +27,15 @@ window.onload = function() {
     return new Promise(resolve => setTimeout(resolve, ms));
   };
   
-  var readText = function(text) {
+  var readText = function(text, lang) {
     return new Promise(function(resolve, reject) {
       var msg = new SpeechSynthesisUtterance();
       msg.text = text;
       msg.onend = resolve;
       msg.volume = 1;
+      if(lang) {
+        msg.lang = lang;   
+      }
       window.speechSynthesis.speak(msg);
     });
   };
@@ -104,7 +107,7 @@ window.onload = function() {
           if(!playing) break;
           await sleep(1000);
           if(!playing) break;
-          await readText(mp3Info[2]);
+          await readText(mp3Info[2], 'zh-TW');
           if(!playing) break;
           await sleep(1000);
           if(!playing) break;
