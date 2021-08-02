@@ -23,6 +23,9 @@
         if(!isLocalhost()) {
           gapi.load('client:auth2', initClient);
         }
+        else {
+          document.getElementById('btnPlay').style.display = '';
+        }
       }
 
       /**

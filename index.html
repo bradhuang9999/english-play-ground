@@ -11,17 +11,29 @@
     <title>Hello, world!</title>
   </head>
   <body>
-    <button id="authorize_button" style="display: none;">Authorize</button>
-    <button id="signout_button" style="display: none;">Sign Out</button>
+    <div class="col-lg-8 mx-auto p-3 py-md-5">
+      <header class="d-flex align-items-center pb-3 mb-5 border-bottom">
+        <span class="fs-4">Vocabulary List</span>
+      </header>
+    
+      <main>
+        <button id="authorize_button" style="display: none;">Authorize</button>
+        <button id="signout_button" style="display: none;">Sign Out</button>
+    
+        <span class="fs-2" id="textNowPlaying"></span><br>
+        <span class="fs-2" id="textTranslation"></span><br>
+        <span class="fs-5" id="textStatus"></span><br>
+        <button id="btnPlay" style="display: none;">Read</button>
+      </main>
 
-    <span id="textNowPlaying"></span><br>
-    <span id="textTranslation"></span><br>
-    <span id="textStatus"></span><br>
-    <button id="btnPlay" style="display: none;">play</button>
+    </div>
+
+
+
 
     <script src='libs/NoSleep/0.12.0/NoSleep.min.js'></script>
     <script src='libs/date-fns/1.30.1/date_fns.min.js'></script>
-    <script src="libs/bootstrap/5.0.2/js/bootstrap.min.js"></script>
+    <script src="libs/bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
     <script src='googleSheet.js'></script>
     <script src='index.js'></script>
     
