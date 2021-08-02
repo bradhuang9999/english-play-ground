@@ -119,18 +119,37 @@ window.onload = function() {
       noSleep.disable();
   }  
   
-  async function loadMySheetData() {
-    try {
-      initColumnMap();
+  async function loadGoogleSheetDataFromCache(spreadsheetId, range) {
+    var todayStr = dateFns.format(new Date(), "YYYYMMDD");
+    var timeKey = spreadsheetId + '_' + range + '_time';
+    var dataKey = spreadsheetId + '_' + range + '_data';
+    if(localStorage.getItem(timeKey) === todayStr) {
+      var dataSheet = JSON.parse(localStorage.getItem(dataKey));
+      return dataSheet;
+    }
+    else {
       var response = await gapi.client.sheets.spreadsheets.values.get({
-            spreadsheetId: '13fG3xpumfYRSjWPgDSIh0HIHdaqERxM-b2neeDsZlzU',
-            range: 'Vocabulary!A2:R',
-          }); 
-      
+        spreadsheetId: spreadsheetId,
+        range: range,
+      }); 
+  
       var mp3Arr = [];
       var range = response.result; 
+      localStorage.setItem(dataKey, JSON.stringify(range.values));
+      localStorage.setItem(timeKey, todayStr);
+      return range;
+    }
+  }
+
+  async function loadMySheetData() {
+    initColumnMap();
+    try {
+      var spreadsheetId = '13fG3xpumfYRSjWPgDSIh0HIHdaqERxM-b2neeDsZlzU';
+      var range = 'Vocabulary!A2:R';
       debugger;
-      for(let row of range.values) {
+      var sheetData = await loadGoogleSheetDataFromCache(spreadsheetId, range)
+      
+      for(let row of sheetData) {
         let phrase = row[columnMap.phrase-1];
         let pronunciationMp3 = row[columnMap.pronunciationMp3-1];
         let translation = row[columnMap.translation-1].split('\n')[0];//.replace(/\n/gi, ' ');

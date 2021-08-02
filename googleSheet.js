@@ -1,3 +1,7 @@
+      function isLocalhost() {
+        return location.hostname === "localhost" || location.hostname === "127.0.0.1";
+      }
+
       // Client ID and API key from the Developer Console
       var CLIENT_ID = '273088253477-n1qrqu3r5avhrt9k8kbhf6dqvdst9l4v.apps.googleusercontent.com';
       var API_KEY = 'AIzaSyBPjDcMeNkUMMMH902Cvn_bBN_wY7ZtrCY';
@@ -16,7 +20,9 @@
        *  On load, called to load the auth2 library and API client library.
        */
       function handleClientLoad() {
-        gapi.load('client:auth2', initClient);//
+        if(!isLocalhost()) {
+          gapi.load('client:auth2', initClient);
+        }
       }
 
       /**
