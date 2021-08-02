@@ -10,39 +10,43 @@
 
     <title>Hello, world!</title>
   </head>
-  <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">Navbar</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">Home</a>
-            </li>
-            
-            
-            
-          </ul>
-          <div class="d-flex">
-            <button id="authorize_button" class="btn btn-outline-success" style="display: none;">Authorize</button>
-            <button id="signout_button" class="btn btn-outline-success" style="display: none;">Sign Out</button>
+  <body>   
+    <div class="col-lg-8 mx-auto p-3 py-md-5">
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">Navbar</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#">Home</a>
+              </li>
+              
+              
+              
+            </ul>
+            <div class="d-flex">
+              <button id="authorize_button" class="btn btn-outline-success" style="display: none;">Authorize</button>
+              <button id="signout_button" class="btn btn-outline-success" style="display: none;">Sign Out</button>
+            </div>
           </div>
         </div>
-      </div>
-    </nav>    
-    <div class="col-lg-8 mx-auto p-3 py-md-5">
+      </nav> 
       <main>
         <span class="fs-2" id="textNowPlaying"></span><br>
         <span class="fs-2" id="textTranslation"></span><br>
-        <span class="fs-5" id="textStatus"></span><br>
         <button id="btnPlay" style="display: none;">Read</button>
       </main>
 
+      <footer class="pt-5 my-5 text-muted border-top">
+        <span class="fs-5" id="textStatus"></span><br>
+      </footer>
     </div>
 
+    
+    
 
 
 
