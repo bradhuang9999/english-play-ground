@@ -1,5 +1,5 @@
 window.onload = function() {
-    document.getElementById("btnPlay").onclick = playMp3List;
+    document.getElementById("btnPlay").onclick = loadMySheetData;
   }
   
   var columnMap = {};
