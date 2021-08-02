@@ -51,7 +51,8 @@
           authorizeButton.style.display = 'none';
           signoutButton.style.display = 'block';
           //listMajors();
-          loadMySheetData();
+          //loadMySheetData();
+          document.getElementById('btnPlay').style.display = '';
         } else {
           authorizeButton.style.display = 'block';
           signoutButton.style.display = 'none';
