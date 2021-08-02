@@ -133,7 +133,6 @@ window.onload = function() {
         range: range,
       }); 
   
-      var mp3Arr = [];
       var range = response.result; 
       localStorage.setItem(dataKey, JSON.stringify(range.values));
       localStorage.setItem(timeKey, todayStr);
@@ -149,6 +148,7 @@ window.onload = function() {
       debugger;
       var sheetData = await loadGoogleSheetDataFromCache(spreadsheetId, range)
       
+      var mp3Arr = [];
       for(let row of sheetData) {
         let phrase = row[columnMap.phrase-1];
         let pronunciationMp3 = row[columnMap.pronunciationMp3-1];
