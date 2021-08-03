@@ -1,5 +1,6 @@
 window.onload = function() {
     document.getElementById("btnPlay").onclick = loadMySheetData;
+    document.getElementById("btnReload").onclick = loadMySheetData;
   }
   
   var columnMap = {};
@@ -119,6 +120,19 @@ window.onload = function() {
       noSleep.disable();
   }  
   
+  /**
+   * 清除快取
+   */
+  function reload() {
+    var spreadsheetId = '13fG3xpumfYRSjWPgDSIh0HIHdaqERxM-b2neeDsZlzU';
+    var range = 'Vocabulary!A2:R';
+    var todayStr = dateFns.format(new Date(), "YYYYMMDD");
+    var timeKey = spreadsheetId + '_' + range + '_time';
+    var dataKey = spreadsheetId + '_' + range + '_data';
+    localStorage.removeItem(timeKey);
+    localStorage.removeItem(dataKey);
+  }
+
   async function loadGoogleSheetDataFromCache(spreadsheetId, range) {
     var todayStr = dateFns.format(new Date(), "YYYYMMDD");
     var timeKey = spreadsheetId + '_' + range + '_time';
