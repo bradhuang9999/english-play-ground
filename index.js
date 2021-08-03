@@ -185,7 +185,7 @@ window.onload = function() {
         }
     
         let needReview = row[columnMap.needReview-1];
-        if(!needReview) {//只播放要review的
+        if(needReview==="FALSE") {//只播放要review的
           continue;
         }
         if(pronunciationMp3==='') {
