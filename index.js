@@ -1,7 +1,7 @@
 $('btn-need-login').hide();
 window.onload = function() {
     document.getElementById("btnPlay").onclick = loadMySheetData;
-    document.getElementById("btnReload").onclick = loadMySheetData;
+    document.getElementById("btnReload").onclick = reload;
   }
   
   var columnMap = {};
