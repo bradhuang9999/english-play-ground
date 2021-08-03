@@ -24,7 +24,7 @@
           gapi.load('client:auth2', initClient);
         }
         else {
-          document.getElementById('btnPlay').style.display = '';
+          $('btn-need-login').show();
         }
       }
 
@@ -61,7 +61,7 @@
           signoutButton.style.display = 'block';
           //listMajors();
           //loadMySheetData();
-          document.getElementById('btnPlay').style.display = '';
+          $('btn-need-login').show();
         } else {
           authorizeButton.style.display = 'block';
           signoutButton.style.display = 'none';
