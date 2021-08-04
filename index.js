@@ -214,13 +214,15 @@ window.onload = function() {
           }
           debugger;
         }
+
+        mp3Arr.push([phrase, pronunciationMp3, translation]);
       }
         
       if(sortMode==='createdDate') {
         //預設就是以createdDate排序
       }
       else if(sortMode==='shuffle') {
-        mp3Arr.push([phrase, pronunciationMp3, translation]);
+        mp3Arr = shuffleArr(mp3Arr);
       }
       else if(sortMode==='alphabet'){
         mp3Arr.sort(function(row1, row2) {
