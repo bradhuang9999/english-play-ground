@@ -200,7 +200,7 @@ window.onload = function() {
           }
         }
         else if(playMode==='notRemember') {
-          if(rememberSeq!==0) {
+          if(rememberSeq!=="0") {
             continue;
           }
           debugger;
