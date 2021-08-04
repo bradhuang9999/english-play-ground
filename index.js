@@ -214,42 +214,41 @@ window.onload = function() {
           }
           debugger;
         }
+      }
         
-        if(sortMode==='createdDate') {
-          //預設就是以createdDate排序
-        }
-        else if(sortMode==='shuffle') {
-          mp3Arr.push([phrase, pronunciationMp3, translation]);
-        }
-        else if(sortMode==='alphabet'){
-          mp3Arr.sort(function(row1, row2) {
-            if(getCellVal(row1, columnMap.phrase) > getCellVal(row2, columnMap.phrase)) {
-              return 1;
-            }
-            else if(getCellVal(row1, columnMap.phrase) < getCellVal(row2, columnMap.phrase)) {
-              return -1;
-            }
-            else {
-              return 0;
-            }
-          });
-        }
-        else if(sortMode==='connection'){
-          mp3Arr.sort(function(row1, row2) {
-            if(getCellVal(row1, columnMap.connection) > getCellVal(row2, columnMap.connection)) {
-              return 1;
-            }
-            else if(getCellVal(row1, columnMap.connection) < getCellVal(row2, columnMap.connection)) {
-              return -1;
-            }
-            else {
-              return 0;
-            }
-          });
-        }
+      if(sortMode==='createdDate') {
+        //預設就是以createdDate排序
+      }
+      else if(sortMode==='shuffle') {
+        mp3Arr.push([phrase, pronunciationMp3, translation]);
+      }
+      else if(sortMode==='alphabet'){
+        mp3Arr.sort(function(row1, row2) {
+          if(getCellVal(row1, columnMap.phrase) > getCellVal(row2, columnMap.phrase)) {
+            return 1;
+          }
+          else if(getCellVal(row1, columnMap.phrase) < getCellVal(row2, columnMap.phrase)) {
+            return -1;
+          }
+          else {
+            return 0;
+          }
+        });
+      }
+      else if(sortMode==='connection'){
+        mp3Arr.sort(function(row1, row2) {
+          if(getCellVal(row1, columnMap.connection) > getCellVal(row2, columnMap.connection)) {
+            return 1;
+          }
+          else if(getCellVal(row1, columnMap.connection) < getCellVal(row2, columnMap.connection)) {
+            return -1;
+          }
+          else {
+            return 0;
+          }
+        });
       }
       
-      mp3Arr = shuffleArr(mp3Arr);
       playMp3List(mp3Arr);
     }
     catch(e) {
