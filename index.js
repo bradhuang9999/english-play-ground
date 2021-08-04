@@ -118,6 +118,9 @@ window.onload = function() {
           console.error(e);
         }
       }
+
+      playing = false;
+      document.getElementById("btnPlay").innerText = 'Play';
       noSleep.disable();
   }  
   
@@ -165,12 +168,18 @@ window.onload = function() {
       var range = 'Vocabulary!A2:R';
       var sheetData = await loadGoogleSheetDataFromCache(spreadsheetId, range)
       
-      let playMode = $('[name=btnPlayMode]:checked').val();
+      let sortMode = $('[name=btnSortMode]:checked').val();
+      let filterMode = $('[name=btnFilterMode]:checked').val();
       var mp3Arr = [];
+
+      var getCellVal = function(row, columnIdx) {
+        return row[columnIdx-1];
+      }
+
       for(let row of sheetData) {
-        let phrase = row[columnMap.phrase-1];
-        let pronunciationMp3 = row[columnMap.pronunciationMp3-1];
-        let translation = row[columnMap.translation-1].split('\n')[0];//.replace(/\n/gi, ' ');
+        let phrase = getCellVal(row, columnMap.phrase);
+        let pronunciationMp3 = getCellVal(row, columnMap.pronunciationMp3);
+        let translation = getCellVal(row, columnMap.translation).split('\n')[0];//.replace(/\n/gi, ' ');
         if(translation.startsWith('n.')) {
           translation = "名詞 " + translation.substring(2);
         }
@@ -188,26 +197,56 @@ window.onload = function() {
           continue;
         }
 
-        let needReview     = row[columnMap.needReview-1];
-        let lastReviewDate = row[columnMap.lastReviewDate-1];
-        let rememberSeq    = row[columnMap.rememberSeq-1];
+        let needReview     = getCellVal(row, columnMap.needReview);
+        let lastReviewDate = getCellVal(row, columnMap.lastReviewDate);
+        let rememberSeq    = getCellVal(row, columnMap.rememberSeq);
 
-        if(playMode==='all') {
+        if(filterMode==='all') {
         }
-        else if(playMode==='needReview') {
+        else if(filterMode==='needReview') {
           if(needReview==="FALSE") {//只播放要review的
             continue;
           }
         }
-        else if(playMode==='notRemember') {
+        else if(filterMode==='notRemember') {
           if(rememberSeq!=="0") {
             continue;
           }
           debugger;
         }
         
-
-        mp3Arr.push([phrase, pronunciationMp3, translation]);
+        if(sortMode==='createdDate') {
+          //預設就是以createdDate排序
+        }
+        else if(sortMode==='shuffle') {
+          mp3Arr.push([phrase, pronunciationMp3, translation]);
+        }
+        else if(sortMode==='alphabet'){
+          mp3Arr.sort(function(row1, row2) {
+            if(getCellVal(row1, columnMap.phrase) > getCellVal(row2, columnMap.phrase)) {
+              return 1;
+            }
+            else if(getCellVal(row1, columnMap.phrase) < getCellVal(row2, columnMap.phrase)) {
+              return -1;
+            }
+            else {
+              return 0;
+            }
+          });
+        }
+        else if(sortMode==='connection'){
+          mp3Arr.sort(function(row1, row2) {
+            if(getCellVal(row1, columnMap.connection) > getCellVal(row2, columnMap.connection)) {
+              return 1;
+            }
+            else if(getCellVal(row1, columnMap.connection) < getCellVal(row2, columnMap.connection)) {
+              return -1;
+            }
+            else {
+              return 0;
+            }
+          });
+        }
       }
       
       mp3Arr = shuffleArr(mp3Arr);
