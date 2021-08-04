@@ -163,9 +163,9 @@ window.onload = function() {
     try {
       var spreadsheetId = '13fG3xpumfYRSjWPgDSIh0HIHdaqERxM-b2neeDsZlzU';
       var range = 'Vocabulary!A2:R';
-      debugger;
       var sheetData = await loadGoogleSheetDataFromCache(spreadsheetId, range)
       
+      let playMode = $('[name=btnPlayMode]:checked').val();
       var mp3Arr = [];
       for(let row of sheetData) {
         let phrase = row[columnMap.phrase-1];
@@ -183,14 +183,29 @@ window.onload = function() {
         else if(translation.startsWith('v.')) {
           translation = "動詞 " + translation.substring(2);
         }
-    
-        let needReview = row[columnMap.needReview-1];
-        if(needReview==="FALSE") {//只播放要review的
-          continue;
-        }
+        
         if(pronunciationMp3==='') {
           continue;
         }
+
+        let needReview     = row[columnMap.needReview-1];
+        let lastReviewDate = row[columnMap.lastReviewDate-1];
+        let rememberSeq    = row[columnMap.rememberSeq-1];
+
+        if(playMode==='all') {
+        }
+        else if(playMode==='needReview') {
+          if(needReview==="FALSE") {//只播放要review的
+            continue;
+          }
+        }
+        else if(playMode==='notRemember') {
+          if(rememberSeq!==0) {
+            continue;
+          }
+          debugger;
+        }
+        
 
         mp3Arr.push([phrase, pronunciationMp3, translation]);
       }
