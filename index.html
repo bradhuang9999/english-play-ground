@@ -125,24 +125,26 @@
       {{#each this}}
       <div class="row mt-1" data-bs-toggle="collapse" data-bs-target="#{{phrase}}VocDetail">
         <div class="col-12">
-          <button id="{{phrase}}VocBtn" class="btn btn-secondary w-100 text-start" type="button">
+          <button id="{{phrase}}VocBtn" class="btn btn-secondary w-100 text-start fs-3" type="button">
             {{phrase}}
           </button>
         </div>
       </div>
       <div id="{{phrase}}VocDetail" class="row collapse hide">
         <div class="col-12">
-          <div class="card card-body">
+          <div class="card card-body fs-5">
             {{#if sentence}}
             <b>Sentence</b>
             {{sentence}}
             {{/if}}
-            
+            <br><br>
+
             {{#if definition}}
             <b>Definition</b>
             {{definition}}
             {{/if}}
-            
+            <br><br>
+
             {{#if translation}}
             <b>Translation</b>
             {{translation}}
