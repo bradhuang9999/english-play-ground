@@ -3,7 +3,7 @@ var settingUtil = (()=>{
   thisUtil.settingSave = function() {
     if(document.getElementById('inputApiKey').value!==localStorage.getItem("vocApiKey")) {
       localStorage.setItem("vocApiKey", document.getElementById('inputApiKey').value);
-      initClient();//initial again if ApiKey changed
+      //initClient();//initial again if ApiKey changed
     }
     
     localStorage.setItem("vocSpreadsheetId", document.getElementById('inputVocSpreadsheetId').value);
