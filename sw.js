@@ -9,6 +9,7 @@ var filesMayChange = [
 var staticFileCacheKey = 'staticFile';
 var staticFile = [
   'libs/bootstrap/5.0.2/css/bootstrap.min.css',
+  'libs/bootstrap-dark-5/1.1.0/css/bootstrap-nightfall.css',
   'libs/jquery/3.6.0/jquery-3.6.0.min.js',
   'libs/NoSleep/0.12.0/NoSleep.min.js',
   'libs/date-fns/1.30.1/date_fns.min.js',
