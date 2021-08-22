@@ -1,11 +1,49 @@
-      function isLocalhost() {
-        return location.hostname === "localhost" || location.hostname === "127.0.0.1";
-      }
+var settingUtil = (()=>{
+  var thisUtil = {};
+  thisUtil.settingSave = function() {
+    if(document.getElementById('inputApiKey').value!==localStorage.getItem("vocApiKey")) {
+      localStorage.setItem("vocApiKey", document.getElementById('inputApiKey').value);
+      initClient();//initial again if ApiKey changed
+    }
+    
+    localStorage.setItem("vocSpreadsheetId", document.getElementById('inputVocSpreadsheetId').value);
+    localStorage.setItem("vocSheetName", document.getElementById('inputVocSheetName').value);
+    localStorage.setItem("vocSheetId", document.getElementById('inputVocSheetId').value);
 
-      // Client ID and API key from the Developer Console
+    msgUtil.showSuccess('Save Successful');
+  };
+
+  thisUtil.settingLoad = function() {
+    document.getElementById('inputApiKey').value = localStorage.getItem("vocApiKey");
+    document.getElementById('inputVocSpreadsheetId').value = localStorage.getItem("vocSpreadsheetId");
+    document.getElementById('inputVocSheetName').value = localStorage.getItem("vocSheetName");
+    document.getElementById('inputVocSheetId').value = localStorage.getItem("vocSheetId");
+  };
+
+  thisUtil.getApiKey = function() {
+    return document.getElementById('inputApiKey').value;
+  };
+
+  thisUtil.getSpreadsheetId = function() {
+    return document.getElementById('inputVocSpreadsheetId').value;
+  };
+
+  thisUtil.getVocSheetName = function() {
+    return document.getElementById('inputVocSheetName').value;
+  };
+
+  thisUtil.getVocSheetId = function() {
+    return document.getElementById('inputVocSheetId').value;
+  };
+
+  thisUtil.settingLoad();//Init and load setting
+  
+  return thisUtil;
+})();
+
+// Client ID and API key from the Developer Console
       var CLIENT_ID = '273088253477-n1qrqu3r5avhrt9k8kbhf6dqvdst9l4v.apps.googleusercontent.com';
-      var API_KEY = 'AIzaSyBPjDcMeNkUMMMH902Cvn_bBN_wY7ZtrCY';
-
+      
       // Array of API discovery doc URLs for APIs used by the quickstart
       var DISCOVERY_DOCS = ["https://sheets.googleapis.com/$discovery/rest?version=v4"];
 
@@ -20,11 +58,8 @@
        *  On load, called to load the auth2 library and API client library.
        */
       function handleClientLoad() {
-        if(!isLocalhost()) {
+        if(settingUtil.getApiKey()!=='') {
           gapi.load('client:auth2', initClient);
-        }
-        else {
-          $('btn-need-login').show();
         }
       }
 
@@ -34,7 +69,7 @@
        */
       function initClient() {
         gapi.client.init({
-          apiKey: API_KEY,
+          apiKey: settingUtil.getApiKey(),
           clientId: CLIENT_ID,
           discoveryDocs: DISCOVERY_DOCS,
           scope: SCOPES
@@ -47,7 +82,7 @@
           authorizeButton.onclick = handleAuthClick;
           signoutButton.onclick = handleSignoutClick;
         }, function(error) {
-          appendPre(JSON.stringify(error, null, 2));
+          $('#textStatus').html(JSON.stringify(error, null, 2));
         });
       }
 
@@ -80,41 +115,4 @@
        */
       function handleSignoutClick(event) {
         gapi.auth2.getAuthInstance().signOut();
-      }
-
-      /**
-       * Append a pre element to the body containing the given message
-       * as its text node. Used to display the results of the API call.
-       *
-       * @param {string} message Text to be placed in pre element.
-       */
-      function appendPre(message) {
-        var pre = document.getElementById('content');
-        var textContent = document.createTextNode(message + '\n');
-        pre.appendChild(textContent);
-      }
-
-      /**
-       * Print the names and majors of students in a sample spreadsheet:
-       * https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
-       */
-      function listMajors() {
-        gapi.client.sheets.spreadsheets.values.get({
-          spreadsheetId: '13fG3xpumfYRSjWPgDSIh0HIHdaqERxM-b2neeDsZlzU',
-          range: 'Vocabulary!A2:R',
-        }).then(function(response) {
-          var range = response.result;
-          if (range.values.length > 0) {
-            appendPre('Name, Major:');
-            for (i = 0; i < range.values.length; i++) {
-              var row = range.values[i];
-              // Print columns A and E, which correspond to indices 0 and 4.
-              appendPre(row[0] + ', ' + row[4]);
-            }
-          } else {
-            appendPre('No data found.');
-          }
-        }, function(response) {
-          appendPre('Error: ' + response.result.error.message);
-        });
       }

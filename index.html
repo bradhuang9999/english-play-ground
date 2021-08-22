@@ -8,24 +8,46 @@
     <!-- Bootstrap CSS -->
     <link href="libs/bootstrap/5.0.2/css/bootstrap.min.css" rel="stylesheet">
 
-    <title>Hello, world!</title>
+    <title>Vocabulary List</title>
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="images/icons/icon_152.png">
+    <meta name="theme-color" content="white"/>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Vocabulary List">
+    <meta name="msapplication-TileImage" content="images/icons/icon_144.png">
+    <meta name="msapplication-TileColor" content="#FFFFFF">
   </head>
   <body>   
+   
     <div class="col-lg-8 mx-auto p-3 py-md-5">
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
-          <a class="navbar-brand" href="#">Navbar</a>
+          <a class="navbar-brand" href="#">
+            <img src="images/icons/icon_128.png" width="30" height="30" class="d-inline-block align-top" alt="">
+          </a>
+          <button id='btnSync' type="button" class="btn btn-outline-secondary position-relative" style="display: none;">
+            Sync
+            <span id='spanSyncNum' class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+              1
+            </span>
+          </button>
+
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <div class="collapse navbar-collapse" id="navbarSupportedContent"  data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
               <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="#">Home</a>
+                <a id='navVocabulary' class="nav-link" href="#">Vocabulary</a>
               </li>
-              
-              
-              
+              <li class="nav-item">
+                <a id='navSetting' class="nav-link" href="#">Setting</a>
+              </li>
             </ul>
             <div class="d-flex">
               <button id="authorize_button" class="btn btn-outline-success" style="display: none;">Authorize</button>
@@ -36,49 +58,95 @@
         </div>
       </nav> 
       <main>
-        <span class="fs-2" id="textNowPlaying"></span><br>
-        <span class="fs-2" id="textTranslation"></span><br>
-        Sort
-        <div class="btn-group-sm" role="group" aria-label="Basic radio toggle button group">  
-          <input type="radio" class="btn-check" name="btnSortMode" id="btnSortMode1" autocomplete="off" checked value='shuffle'>
-          <label class="btn btn-outline-secondary" for="btnSortMode1">Shuffle</label>
-        
-          <input type="radio" class="btn-check" name="btnSortMode" id="btnSortMode2" autocomplete="off" value='alphabet'>
-          <label class="btn btn-outline-secondary" for="btnSortMode2">Alphabet</label>
-        
-          <input type="radio" class="btn-check" name="btnSortMode" id="btnSortMode3" autocomplete="off" value='connection'>
-          <label class="btn btn-outline-secondary" for="btnSortMode3">Connection</label>   
+        <div id='divSetting' class="container d-none">
+          <div class="mb-3">
+            <label for="inputApiKey" class="form-label">Api Key</label>
+            <input type="text" class="form-control" id="inputApiKey">
+          </div>
+          <div class="mb-3">
+            <label for="inputVocSpreadsheetId" class="form-label">Spread Sheet ID</label>
+            <input type="text" class="form-control" id="inputVocSpreadsheetId">
+          </div>
+          <div class="mb-3">
+            <label for="inputVocSheetName" class="form-label">Vocabulary Sheet Name</label>
+            <input type="text" class="form-control" id="inputVocSheetName">
+          </div>
+          <div class="mb-3">
+            <label for="inputVocSheetId" class="form-label">Vocabulary Sheet ID</label>
+            <input type="text" class="form-control" id="inputVocSheetId">
+          </div>
+          <button id='btnSettingSave' class='btn btn-outline-primary w-100'>Save</button>
+        </div>
 
-          <input type="radio" class="btn-check" name="btnSortMode" id="btnSortMode4" autocomplete="off" value='createdDate'>
-          <label class="btn btn-outline-secondary" for="btnSortMode4">Created Date</label>
+        <div id='divVocabulary' class="container d-none">
+          <span class="fs-2" id="textNowPlaying"></span><br>
+          <span class="fs-2" id="textTranslation"></span><br>
+          Sort
+          <div class="btn-group-sm" role="group" aria-label="Basic radio toggle button group">  
+            <input type="radio" class="btn-check" name="btnSortMode" id="btnSortMode1" autocomplete="off" checked value='shuffle'>
+            <label class="btn btn-outline-secondary" for="btnSortMode1">Shuffle</label>
+          
+            <input type="radio" class="btn-check" name="btnSortMode" id="btnSortMode2" autocomplete="off" value='alphabet'>
+            <label class="btn btn-outline-secondary" for="btnSortMode2">Alphabet</label>
+          
+            <input type="radio" class="btn-check" name="btnSortMode" id="btnSortMode3" autocomplete="off" value='connection'>
+            <label class="btn btn-outline-secondary" for="btnSortMode3">Connection</label>   
+  
+            <input type="radio" class="btn-check" name="btnSortMode" id="btnSortMode4" autocomplete="off" value='createdDate'>
+            <label class="btn btn-outline-secondary" for="btnSortMode4">Created Date</label>
+          </div>
+          Filter
+          <div class="btn-group-sm" role="group" aria-label="Basic radio toggle button group">          
+            <input type="radio" class="btn-check" name="btnFilterMode" id="btnFilterMode0" autocomplete="off" checked value='none'>
+            <label class="btn btn-outline-secondary" for="btnFilterMode0">None</label>
+
+            <input type="radio" class="btn-check" name="btnFilterMode" id="btnFilterMode1" autocomplete="off" value='needReview'>
+            <label class="btn btn-outline-secondary" for="btnFilterMode1">Need Review</label>
+          
+            <input type="radio" class="btn-check" name="btnFilterMode" id="btnFilterMode2" autocomplete="off" value='notRemember'>
+            <label class="btn btn-outline-secondary" for="btnFilterMode2">Not Remember</label>
+          </div>
+          <br>
+          <button id="btnLoadVoc" class='btn-need-login'>Load</button>
+          <button id="btnPlay" class='btn-need-login'>Read</button>
+
+          <div id='divVocabularyList' class="container">
+
+          </div>
+
+          <span class="fs-5" id="textStatus"></span><br>
         </div>
-        Filter
-        <div class="btn-group-sm" role="group" aria-label="Basic radio toggle button group">          
-          <input type="radio" class="btn-check" name="btnFilterMode" id="btnFilterMode1" autocomplete="off" checked value='needReview'>
-          <label class="btn btn-outline-secondary" for="btnFilterMode1">Need Review</label>
-        
-          <input type="radio" class="btn-check" name="btnFilterMode" id="btnFilterMode2" autocomplete="off" value='notRemember'>
-          <label class="btn btn-outline-secondary" for="btnFilterMode2">Not Remember</label>
-        </div>
-        <br>
-        <button id="btnPlay" class='btn-need-login'>Read</button>
+
+        <div id='divToastContainer' class="position-fixed bottom-0 end-0 p-3" style="z-index: 5"></div>
+        <div id='divErrorInfo'></div>
       </main>
+    </div>    
 
-      <footer class="pt-5 my-5 text-muted border-top">
-        <span class="fs-5" id="textStatus"></span><br>
-      </footer>
-    </div>
-
-    
-    
-
+    <script id="templateVocabularyList" type="text/x-handlebars-template">
+      {{#each this}}
+      <div class="row" data-bs-toggle="collapse" data-bs-target="#{{0}}Mean">
+        <div class="col-12">
+          <button class="btn btn-outline-secondary w-100" type="button">
+            {{0}}
+          </button>
+        </div>
+      </div>
+      <div class="row collapse hide" id="{{0}}Mean">
+        <div class="col-12">{{2}}</div>
+      </div>
+      {{/each}}
+    </script>
 
     <script src="libs/jquery/3.6.0/jquery-3.6.0.min.js"></script>
     <script src='libs/NoSleep/0.12.0/NoSleep.min.js'></script>
     <script src='libs/date-fns/1.30.1/date_fns.min.js'></script>
     <script src="libs/bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
-    <script src='googleSheet.js'></script>
-    <script src='index.js'></script>
+    <script src="libs/bootstrap4-toggle/3.6.1/js/bootstrap4-toggle.min.js"></script>
+    <script src="libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script src="libs/handlebars/4.7.7/handlebars.min.js"></script>
+    <script src='js/common.js'></script>
+    <script src='js/googleSheet.js'></script>
+    <script src='js/index.js'></script>
     
     <script async defer src="https://apis.google.com/js/api.js"
       onload="this.onload=function(){};handleClientLoad()"
