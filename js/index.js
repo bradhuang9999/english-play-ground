@@ -271,7 +271,7 @@ function registerEvent() {
         let lastReviewDate = getCellVal(row, columnMap.lastReviewDate);
         let rememberSeq    = getCellVal(row, columnMap.rememberSeq);
 
-        if(filterMode==='all') {
+        if(filterMode==='none') {//沒有filter
         }
         else if(filterMode==='needReview') {
           if(needReview==="FALSE") {//只播放要review的
