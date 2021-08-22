@@ -124,17 +124,30 @@
 
     <script id="templateVocabularyList" type="text/x-handlebars-template">
       {{#each this}}
-      <div class="row mt-1" data-bs-toggle="collapse" data-bs-target="#{{0}}Mean">
+      <div class="row mt-1" data-bs-toggle="collapse" data-bs-target="#{{phrase}}VocDetail">
         <div class="col-12">
-          <button class="btn btn-secondary w-100 text-start" type="button">
-            {{0}}
+          <button id="{{phrase}}VocBtn" class="btn btn-secondary w-100 text-start" type="button">
+            {{phrase}}
           </button>
         </div>
       </div>
-      <div class="row collapse hide" id="{{0}}Mean">
+      <div id="{{phrase}}VocDetail" class="row collapse hide">
         <div class="col-12">
           <div class="card card-body">
-            {{2}}
+            {{#if sentence}}
+            <b>Sentence</b>
+            {{sentence}}
+            {{/if}}
+            
+            {{#if definition}}
+            <b>Definition</b>
+            {{definition}}
+            {{/if}}
+            
+            {{#if translation}}
+            <b>Translation</b>
+            {{translation}}
+            {{/if}}
           </div>
         </div>
       </div>

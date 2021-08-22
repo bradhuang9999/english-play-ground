@@ -173,13 +173,17 @@ function registerEvent() {
       noSleep.enable();
       for (const vocabularyInfo of vocabularyArr) {
         try {
-          document.getElementById('textNowPlaying').innerText = vocabularyInfo[0];
-          document.getElementById('textTranslation').innerText = vocabularyInfo[2];
-          await playMp3(vocabularyInfo[1]);
+          document.getElementById('textNowPlaying').innerText = vocabularyInfo.phrase;
+          document.getElementById('textTranslation').innerText = vocabularyInfo.translation;
+
+          document.getElementById(vocabularyInfo.phrase + 'VocBtn').focus();
+          document.getElementById(vocabularyInfo.phrase + 'VocBtn').click();
+          
+          await playMp3(vocabularyInfo.pronunciationMp3);
           if(!playing) break;
           await sleep(1000);
           if(!playing) break;
-          await readText(vocabularyInfo[2], 'zh-TW');
+          await readText(vocabularyInfo.translation, 'zh-TW');
           if(!playing) break;
           await sleep(1000);
           if(!playing) break;
@@ -285,7 +289,14 @@ function registerEvent() {
           debugger;
         }
 
-        vocabularyArr.push([phrase, pronunciationMp3, translation]);
+        //vocabularyArr.push([phrase, pronunciationMp3, translation, getCellVal(row2, columnMap.phrase), ]);
+        vocabularyArr.push({phrase:phrase,
+          pronunciationMp3:pronunciationMp3,
+          translation:translation,
+          sentence:getCellVal(row, columnMap.sentence),
+          definition:getCellVal(row, columnMap.definition),
+          connection:getCellVal(row, columnMap.connection),
+        })
       }
         
       if(sortMode==='createdDate') {
@@ -296,10 +307,10 @@ function registerEvent() {
       }
       else if(sortMode==='alphabet'){
         vocabularyArr.sort(function(row1, row2) {
-          if(getCellVal(row1, columnMap.phrase) > getCellVal(row2, columnMap.phrase)) {
+          if(row1.phrase > row2.phrase) {
             return 1;
           }
-          else if(getCellVal(row1, columnMap.phrase) < getCellVal(row2, columnMap.phrase)) {
+          else if(row1.phrase < row2.phrase) {
             return -1;
           }
           else {
@@ -309,10 +320,10 @@ function registerEvent() {
       }
       else if(sortMode==='connection'){
         vocabularyArr.sort(function(row1, row2) {
-          if(getCellVal(row1, columnMap.connection) > getCellVal(row2, columnMap.connection)) {
+          if(row1.connection > row2.connection) {
             return 1;
           }
-          else if(getCellVal(row1, columnMap.connection) < getCellVal(row2, columnMap.connection)) {
+          else if(row1.connection < row2.connection) {
             return -1;
           }
           else {
