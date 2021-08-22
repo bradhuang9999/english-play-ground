@@ -126,13 +126,17 @@
       {{#each this}}
       <div class="row" data-bs-toggle="collapse" data-bs-target="#{{0}}Mean">
         <div class="col-12">
-          <button class="btn btn-outline-secondary w-100" type="button">
+          <button class="btn btn-secondary w-100 text-start" type="button">
             {{0}}
           </button>
         </div>
       </div>
       <div class="row collapse hide" id="{{0}}Mean">
-        <div class="col-12">{{2}}</div>
+        <div class="col-12">
+          <div class="card card-body">
+            {{2}}
+          </div>
+        </div>
       </div>
       {{/each}}
     </script>
