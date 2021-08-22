@@ -57,6 +57,10 @@ function registerEvent() {
   divVocabularyList.on('show.bs.collapse','.collapse', function() {
     divVocabularyList.find('.collapse.show').collapse('hide');
   });
+  divVocabularyList.on('shown.bs.collapse', function(e) {
+    //debugger;
+    //$(e.target).prev()[0].focus();
+  });
 
   document.getElementById("navVocabulary").onclick = navUtil.navVocabularyShow;
   document.getElementById("navSetting").onclick = navUtil.navSettingShow;
@@ -173,11 +177,11 @@ function registerEvent() {
       noSleep.enable();
       for (const vocabularyInfo of vocabularyArr) {
         try {
-          document.getElementById('textNowPlaying').innerText = vocabularyInfo.phrase;
-          document.getElementById('textTranslation').innerText = vocabularyInfo.translation;
+          //document.getElementById('textNowPlaying').innerText = vocabularyInfo.phrase;
+          //document.getElementById('textTranslation').innerText = vocabularyInfo.translation;
 
-          document.getElementById(vocabularyInfo.phrase + 'VocBtn').focus();
           document.getElementById(vocabularyInfo.phrase + 'VocBtn').click();
+          //document.getElementById(vocabularyInfo.phrase + 'VocBtn').focus();
           
           await playMp3(vocabularyInfo.pronunciationMp3);
           if(!playing) break;
@@ -286,7 +290,6 @@ function registerEvent() {
           if(rememberSeq!=="0") {
             continue;
           }
-          debugger;
         }
 
         //vocabularyArr.push([phrase, pronunciationMp3, translation, getCellVal(row2, columnMap.phrase), ]);
