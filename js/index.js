@@ -27,7 +27,7 @@ $(document).ready(function() {
 
   
   registerEvent();
-  registerHelper();
+  registerHandleBarHelper();
   errorHandler();
   
   if(settingUtil.getApiKey()==='') {
@@ -39,10 +39,14 @@ $(document).ready(function() {
   
 });
 
-function registerHelper() {
+function registerHandleBarHelper() {
   Handlebars.registerHelper('eq', function(arg1, arg2, options) {
     return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
-});
+  });
+
+  Handlebars.registerHelper('wrap', function(arg1) {
+    return arg1.replaceAll(`\n`, '\n<br>')    ;
+  });
 }
 
 function registerEvent() {
@@ -124,25 +128,25 @@ function registerEvent() {
     document.getElementById('textStatus').innerText = 'loadeddata';
   }); 
   
-    myAudio.volume = 0.5;
-    var playMp3 = function(url) {
-      return new Promise(function(resolve, reject) {
-          try{
-            if (!myAudio.canPlayType('audio/mpeg')) {
-              alert('not support mp3');
-              return;
-            }
-            myAudio.setAttribute('src', url);
-            myAudio.addEventListener("ended", resolve, { once: true }); 
-            myAudio.addEventListener("error", () => reject('Play MP3 error'), { once: true }); 
-            myAudio.play();
+  myAudio.volume = 0.5;
+  var playMp3 = function(url) {
+    return new Promise(function(resolve, reject) {
+        try{
+          if (!myAudio.canPlayType('audio/mpeg')) {
+            alert('not support mp3');
+            return;
           }
-          catch(e) {
-              console.error(e);
-              reject();
-          }
-      });
-    };
+          myAudio.setAttribute('src', url);
+          myAudio.addEventListener("ended", resolve, { once: true }); 
+          myAudio.addEventListener("error", () => reject('Play MP3 error'), { once: true }); 
+          myAudio.play();
+        }
+        catch(e) {
+            console.error(e);
+            reject();
+        }
+    });
+  };
   
   var shuffleArr = function(array) {
     var currentIndex = array.length,  randomIndex;
