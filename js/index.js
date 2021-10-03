@@ -214,10 +214,22 @@ function setLocalVoice() {
         document.getElementById("btnPlay").innerText = 'Stop';
       }
       
+      var openedPhrase = $('#divVocabularyList .row.show [name=phrase]').val();//目前展開的單字，等一下從這一個開始
+      var vocIdxFm = 0;
+      if(openedPhrase!==undefined) {
+        for(let vocIdx=0;vocIdx<vocabularyArr.length;vocIdx++) {
+            const vocabularyInfo = vocabularyArr[vocIdx];
+            if(vocabularyInfo.phrase===openedPhrase) {
+              vocIdxFm = vocIdx;
+            }
+        }
+      }
+
       var noSleep = new NoSleep();
       noSleep.enable();
-      for (const vocabularyInfo of vocabularyArr) {
+      for(let vocIdx=vocIdxFm;vocIdx<vocabularyArr.length;vocIdx++) {
         try {
+          const vocabularyInfo = vocabularyArr[vocIdx];
           //document.getElementById('textNowPlaying').innerText = vocabularyInfo.phrase;
           //document.getElementById('textTranslation').innerText = vocabularyInfo.translation;
 
@@ -248,7 +260,7 @@ function setLocalVoice() {
 
         }
         catch(e) {
-          console.error(e);
+          msgUtil.showError(e.toString());
         }
       }
 
