@@ -1,4 +1,4 @@
-var fileMayChangeCacheKey = 'filesMayChange';//0924
+var fileMayChangeCacheKey = 'filesMayChange';//1003
 var filesMayChange = [
   'index.html',
   'css/style.css',
