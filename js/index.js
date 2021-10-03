@@ -1,3 +1,4 @@
+var synth = window.speechSynthesis;
 $('btn-need-login').hide();
 $(document).ready(function() {
   if ('serviceWorker' in navigator) {
@@ -90,7 +91,7 @@ var selectEngVoice = document.getElementById('selectEngVoice');
 var selectLocalVoice = document.getElementById('selectLocalVoice');
 var engVoice, localVoice;
 function initVoiceList() {
-  voices = window.speechSynthesis.getVoices().sort(function (a, b) {
+  voices = synth.getVoices().sort(function (a, b) {
       const aname = a.name.toUpperCase(), bname = b.name.toUpperCase();
       if ( aname < bname ) return -1;
       else if ( aname == bname ) return 0;
@@ -147,30 +148,6 @@ function setLocalVoice() {
     columnMap.wordApiResponse = 18;
   })();
   
-  var sleep = function(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  };
-  
-  var readText = function(text, lang, rate=-1, voice) {
-    return new Promise(function(resolve, reject) {
-      var msg = new SpeechSynthesisUtterance();
-      msg.text = text;
-      msg.onend = resolve;
-      msg.volume = 1;
-      if(lang) {
-        msg.lang = lang;   
-      }
-      if(voice) {
-        msg.voice = voice;
-      }
-      window.speechSynthesis.speak(msg);
-    });
-  };
-
-  var readSpell = function(text, lang) {
-    return readText(text.split('').join(','), lang, 1);
-  };
-  
   var myAudio = document.createElement('audio');
   myAudio.addEventListener("loadstart", function() {
     document.getElementById('textStatus').innerText = 'loadstart';
@@ -199,23 +176,32 @@ function setLocalVoice() {
     });
   };
   
-  var shuffleArr = function(array) {
-    var currentIndex = array.length,  randomIndex;
+
+  /**
+   * 念出文字
+   * 範例：https://mdn.github.io/web-speech-api/speak-easy-synthesis/
+   * @param {*} option 
+   * @returns 
+   */
+  var readText = function(option) {
+    return new Promise(function(resolve, reject) {
+      var msg = new SpeechSynthesisUtterance();
+      msg.text = option.text;
+      msg.onend = resolve;
+      msg.volume = option.volume || 1;
+      if(option.lang) {
+        msg.lang = option.lang;   
+      }
+      if(option.rate) {
+        msg.rate = option.rate;   
+      }
+      if(option.voice) {
+        msg.voice = option.voice;
+      }
+      synth.speak(msg);
+    });
+  };
   
-    // While there remain elements to shuffle...
-    while (0 !== currentIndex) {
-  
-      // Pick a remaining element...
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex--;
-  
-      // And swap it with the current element.
-      [array[currentIndex], array[randomIndex]] = [
-        array[randomIndex], array[currentIndex]];
-    }
-  
-    return array;
-  }
   
   var playing = false;
   var playMp3List = async function() {
@@ -238,24 +224,26 @@ function setLocalVoice() {
           document.getElementById(vocabularyInfo.phrase + 'VocBtn').click();
           //document.getElementById(vocabularyInfo.phrase + 'VocBtn').focus();
           
+          let spellRead = vocabularyInfo.phrase.split('').join(',');
+          await readText({text:spellRead, rate:0.7});
+          if(!playing) break;
+          await sleep(1000);
+          if(!playing) break;
+
           await playMp3(vocabularyInfo.pronunciationMp3);
           if(!playing) break;
           await sleep(1000);
           if(!playing) break;
 
-          await readText(vocabularyInfo.phrase, 'en-US', engVoice);
+          await readText({text:vocabularyInfo.phrase, lang:'en-US', voice:engVoice});
           if(!playing) break;
           await sleep(1000);
           if(!playing) break;
 
-          await readSpell(vocabularyInfo.phrase, null);
+          
+          await readText({text:vocabularyInfo.translation, lang:'zh-TW', voice:localVoice});
           if(!playing) break;
-          await sleep(1000);
-          if(!playing) break;
-
-          await readText(vocabularyInfo.translation, 'zh-TW', localVoice);
-          if(!playing) break;
-          await sleep(1000);
+          await sleep(2000);
           if(!playing) break;
 
         }
