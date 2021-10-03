@@ -25,7 +25,10 @@ $(document).ready(function() {
     });
   }
 
-  
+  initVoiceList();
+  if (speechSynthesis.onvoiceschanged !== undefined) {
+    speechSynthesis.onvoiceschanged = initVoiceList;
+  }
   registerEvent();
   registerHandleBarHelper();
   errorHandler();
@@ -68,6 +71,8 @@ function registerEvent() {
 
   document.getElementById("navVocabulary").onclick = navUtil.navVocabularyShow;
   document.getElementById("navSetting").onclick = navUtil.navSettingShow;
+  document.getElementById("selectEngVoice").onchange = setEngVoice;
+  document.getElementById("selectLocalVoice").onchange = setLocalVoice;
 
   document.getElementById("btnSync").onclick = async () => {
     try {
@@ -80,34 +85,73 @@ function registerEvent() {
   };
 }
 
+var voices = [];
+var selectEngVoice = document.getElementById('selectEngVoice');
+var selectLocalVoice = document.getElementById('selectLocalVoice');
+var engVoice, localVoice;
+function initVoiceList() {
+  voices = window.speechSynthesis.getVoices().sort(function (a, b) {
+      const aname = a.name.toUpperCase(), bname = b.name.toUpperCase();
+      if ( aname < bname ) return -1;
+      else if ( aname == bname ) return 0;
+      else return +1;
+  });
 
+  if(voices.length===0) {
+    return;
+  }
+
+  var selectedIndex = selectEngVoice.selectedIndex < 0 ? 0 : selectEngVoice.selectedIndex;
+  selectEngVoice.innerHTML = '';
+  selectLocalVoice.innerHTML = '';
+  var optionHtml = '';
+  for(let voice of voices) {
+    optionHtml += `\n<option data-lang='${voice.lang}' data-name='${voice.name}'>${voice.name + ' (' + voice.lang + ')' + (voice.default?' -- DEFAULT':'')}</option>`
+  }
+
+  selectEngVoice.innerHTML = optionHtml;
+  selectLocalVoice.innerHTML = optionHtml;
+  selectEngVoice.selectedIndex = localStorage.getItem("engVoiceVal")||0;
+  selectLocalVoice.selectedIndex = localStorage.getItem("localVoiceVal")||0;
+  setEngVoice();
+  setLocalVoice();
+}
+
+function setEngVoice() {
+  engVoice = voices[selectEngVoice.selectedIndex];
+}
+
+function setLocalVoice() {
+  localVoice = voices[selectLocalVoice.selectedIndex];
+}
   
   var columnMap = {};
   (function() {
-      columnMap.phrase = 1;
-      columnMap.sentence = 2;
-      columnMap.createDate = 3;
-      columnMap.lastReviewDate = 4;
-      columnMap.rememberSeq = 5;
-      columnMap.needReview = 6;
-      columnMap.pronunciation = 7;
-      columnMap.pronunciationMp3 = 8;
-      columnMap.definition = 9;
-      columnMap.connection = 10;
-      columnMap.morphology = 11;
-      columnMap.translation = 12;
-      columnMap.frq         = 13;
-      columnMap.dictionaryLink = 14;
-      columnMap.apiResponse = 15;
-      columnMap.etymology = 16;
-      columnMap.wordApiResponse = 17;
+    columnMap.chapter = 1;
+    columnMap.phrase = 2;
+    columnMap.sentence = 3;
+    columnMap.createDate = 4;
+    columnMap.lastReviewDate = 5;
+    columnMap.rememberSeq = 6;
+    columnMap.needReview = 7;
+    columnMap.pronunciation = 8;
+    columnMap.pronunciationMp3 = 9;
+    columnMap.definition = 10;
+    columnMap.connection = 11;
+    columnMap.morphology = 12;
+    columnMap.translation = 13;
+    columnMap.frq         = 14;
+    columnMap.dictionaryLink = 15;
+    columnMap.apiResponse = 16;
+    columnMap.etymology = 17;
+    columnMap.wordApiResponse = 18;
   })();
   
   var sleep = function(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   };
   
-  var readText = function(text, lang) {
+  var readText = function(text, lang, rate=-1, voice) {
     return new Promise(function(resolve, reject) {
       var msg = new SpeechSynthesisUtterance();
       msg.text = text;
@@ -116,8 +160,15 @@ function registerEvent() {
       if(lang) {
         msg.lang = lang;   
       }
+      if(voice) {
+        msg.voice = voice;
+      }
       window.speechSynthesis.speak(msg);
     });
+  };
+
+  var readSpell = function(text, lang) {
+    return readText(text.split('').join(','), lang, 1);
   };
   
   var myAudio = document.createElement('audio');
@@ -191,10 +242,22 @@ function registerEvent() {
           if(!playing) break;
           await sleep(1000);
           if(!playing) break;
-          await readText(vocabularyInfo.translation, 'zh-TW');
+
+          await readText(vocabularyInfo.phrase, 'en-US', engVoice);
           if(!playing) break;
           await sleep(1000);
           if(!playing) break;
+
+          await readSpell(vocabularyInfo.phrase, null);
+          if(!playing) break;
+          await sleep(1000);
+          if(!playing) break;
+
+          await readText(vocabularyInfo.translation, 'zh-TW', localVoice);
+          if(!playing) break;
+          await sleep(1000);
+          if(!playing) break;
+
         }
         catch(e) {
           console.error(e);
@@ -210,8 +273,8 @@ function registerEvent() {
    * 清除快取
    */
   function reload() {
-    var spreadsheetId = '13fG3xpumfYRSjWPgDSIh0HIHdaqERxM-b2neeDsZlzU';
-    var range = 'Vocabulary!A2:R';
+    var spreadsheetId = settingUtil.getSpreadsheetId();
+    var range = settingUtil.getVocSheetName()+'!A2:S';
     var todayStr = dateFns.format(new Date(), "YYYYMMDD");
     var timeKey = spreadsheetId + '_' + range + '_time';
     var dataKey = spreadsheetId + '_' + range + '_data';
@@ -247,7 +310,7 @@ function registerEvent() {
   async function loadVocabularyList() {
     try {
       var spreadsheetId = settingUtil.getSpreadsheetId();
-      var range = settingUtil.getVocSheetName()+'!A2:R';
+      var range = settingUtil.getVocSheetName()+'!A2:S';
       var sheetData = await loadGoogleSheetDataFromCache(spreadsheetId, range)
       
       let sortMode = $('[name=btnSortMode]:checked').val();
@@ -255,11 +318,14 @@ function registerEvent() {
       vocabularyArr = [];
 
       var getCellVal = function(row, columnIdx) {
-        return row[columnIdx-1];
+        return row[columnIdx-1]||'';
       }
 
       for(let row of sheetData) {
         let phrase = getCellVal(row, columnMap.phrase);
+        if(phrase==='') {
+          continue;
+        }
         let pronunciationMp3 = getCellVal(row, columnMap.pronunciationMp3);
         let translation = getCellVal(row, columnMap.translation).split('\n')[0];//.replace(/\n/gi, ' ');
         if(translation.startsWith('n.')) {
@@ -305,14 +371,33 @@ function registerEvent() {
           connection:getCellVal(row, columnMap.connection),
         })
       }
+
+      var sortFunc = function(sortCol) {
+        return function(row1, row2) {
+          if(row1[sortCol] > row2[sortCol]) {
+            return 1;
+          }
+          else if(row1[sortCol] < row2[sortCol]) {
+            return -1;
+          }
+          else {
+            return 0;
+          }
+        }
+      };
         
-      if(sortMode==='createdDate') {
+      if(sortMode==='original'){
+        //如果是原本的排序，那就不用排序
+      }
+      else if(sortMode==='createdDate') {
         //預設就是以createdDate排序
+        vocabularyArr.sort(sortFunc('createdDate'));
       }
       else if(sortMode==='shuffle') {
         vocabularyArr = shuffleArr(vocabularyArr);
       }
       else if(sortMode==='alphabet'){
+        /*
         vocabularyArr.sort(function(row1, row2) {
           if(row1.phrase > row2.phrase) {
             return 1;
@@ -324,8 +409,11 @@ function registerEvent() {
             return 0;
           }
         });
+        */
+        vocabularyArr.sort(sortFunc('phrase'));
       }
       else if(sortMode==='connection'){
+        /*
         vocabularyArr.sort(function(row1, row2) {
           if(row1.connection > row2.connection) {
             return 1;
@@ -337,6 +425,8 @@ function registerEvent() {
             return 0;
           }
         });
+        */
+        vocabularyArr.sort(sortFunc('connection'));
       }
       
       var templateStr = document.getElementById("templateVocabularyList").innerHTML;

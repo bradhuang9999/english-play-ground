@@ -10,6 +10,9 @@ var settingUtil = (()=>{
     localStorage.setItem("vocSheetName", document.getElementById('inputVocSheetName').value);
     localStorage.setItem("vocSheetId", document.getElementById('inputVocSheetId').value);
 
+    localStorage.setItem("engVoiceVal", selectEngVoice.selectedIndex);
+    localStorage.setItem("localVoiceVal", selectLocalVoice.selectedIndex);
+
     msgUtil.showSuccess('Save Successful');
   };
 

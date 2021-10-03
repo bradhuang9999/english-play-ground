@@ -76,23 +76,34 @@
             <label for="inputVocSheetId" class="form-label">Vocabulary Sheet ID</label>
             <input type="text" class="form-control" id="inputVocSheetId">
           </div>
+          <div class="mb-3">
+            <label for="selectEngVoice" class="form-label">English Voice</label>
+            <select class="form-select" id="selectEngVoice"></select>
+          </div>
+          <div class="mb-3">
+            <label for="selectLocalVoice" class="form-label">Local Voice</label>
+            <select class="form-select" id="selectLocalVoice"></select>
+          </div>
           <button id='btnSettingSave' class='btn btn-outline-primary w-100'>Save</button>
         </div>
 
         <div id='divVocabulary' class="container d-none">
           Sort
-          <div class="btn-group-sm" role="group" aria-label="Basic radio toggle button group">  
-            <input type="radio" class="btn-check" name="btnSortMode" id="btnSortMode1" autocomplete="off" checked value='shuffle'>
-            <label class="btn btn-outline-secondary" for="btnSortMode1">Shuffle</label>
+          <div class="btn-group-sm" role="group" aria-label="Basic radio toggle button group">    
+            <input type="radio" class="btn-check" name="btnSortMode" id="btnSortMode1" autocomplete="off" checked value='original'>
+            <label class="btn btn-outline-secondary" for="btnSortMode1">Original</label>
+
+            <input type="radio" class="btn-check" name="btnSortMode" id="btnSortMode2" autocomplete="off" value='shuffle'>
+            <label class="btn btn-outline-secondary" for="btnSortMode2">Shuffle</label>
           
-            <input type="radio" class="btn-check" name="btnSortMode" id="btnSortMode2" autocomplete="off" value='alphabet'>
-            <label class="btn btn-outline-secondary" for="btnSortMode2">Alphabet</label>
+            <input type="radio" class="btn-check" name="btnSortMode" id="btnSortMode3" autocomplete="off" value='alphabet'>
+            <label class="btn btn-outline-secondary" for="btnSortMode3">Alphabet</label>
           
-            <input type="radio" class="btn-check" name="btnSortMode" id="btnSortMode3" autocomplete="off" value='connection'>
-            <label class="btn btn-outline-secondary" for="btnSortMode3">Connection</label>   
+            <input type="radio" class="btn-check" name="btnSortMode" id="btnSortMode4" autocomplete="off" value='connection'>
+            <label class="btn btn-outline-secondary" for="btnSortMode4">Connection</label>
   
-            <input type="radio" class="btn-check" name="btnSortMode" id="btnSortMode4" autocomplete="off" value='createdDate'>
-            <label class="btn btn-outline-secondary" for="btnSortMode4">Created Date</label>
+            <input type="radio" class="btn-check" name="btnSortMode" id="btnSortMode5" autocomplete="off" value='createdDate'>
+            <label class="btn btn-outline-secondary" for="btnSortMode5">Created Date</label>
           </div>
           Filter
           <div class="btn-group-sm" role="group" aria-label="Basic radio toggle button group">          
