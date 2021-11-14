@@ -61,6 +61,7 @@
   --bs-gradient: linear-gradient(180deg, rgba(17, 17, 17, 0.15), rgba(17, 17, 17, 0));
   --bs-body-color-alt: #e8eaed;
   --bs-body-bg-alt: #202124;
+  --bs-bg-opacity: 100;
 }
 
 body {

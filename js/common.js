@@ -19,7 +19,7 @@ var msgUtil = (()=>{
     };
   
     thisUtil.showSuccess = function(msgText) {
-      showMsg(msgText, 'bg-success text-white');
+      showMsg(msgText, 'bg-success');
     };
   
     thisUtil.showInfo = function(msgText) {
@@ -27,7 +27,7 @@ var msgUtil = (()=>{
     };
   
     thisUtil.showError = function(msgText) {
-      showMsg(msgText, 'bg-danger text-white');
+      showMsg(msgText, 'bg-danger');
     };
   
     thisUtil.showWarn = function(msgText) {
@@ -39,6 +39,7 @@ var msgUtil = (()=>{
 
 function errorHandler() {
   window.onerror = function (msg, url, lineNo, columnNo, error) {
+    console.error(error);
     var string = msg.toLowerCase();
     var substring = "script error";
     //if (string.indexOf(substring) > -1){

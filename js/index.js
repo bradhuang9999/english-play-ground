@@ -57,9 +57,25 @@ function registerEvent() {
   
   document.getElementById("btnSettingSave").onclick = settingUtil.settingSave;
 
+  $("#btnSync").on('click', async ()=>{
+    if(!sheetUtil.isSignedIn) {
+      msgUtil.showWarn("Please sign in");
+      return;
+    }
+
+    await sheetUtil.syncByQueue();
+    
+    var spreadsheetId = settingUtil.getSpreadsheetId();
+    var range = settingUtil.getVocSheetName()+'!A2:S';
+    await sheetUtil.syncSheetData(spreadsheetId, settingUtil.getVocSheetName(), range);
+
+    await loadVocabularyList()
+  });
+  //document.getElementById("btnSync").onclick = sheetUtil.SyncByQueue;
+
   document.getElementById("btnLoadVoc").onclick = loadVocabularyList;
   document.getElementById("btnPlay").onclick = playMp3List;
-  document.getElementById("btnReload").onclick = reload;
+  //document.getElementById("btnReload").onclick = reload;
 
   var divVocabularyList = $('#divVocabularyList');
   divVocabularyList.on('show.bs.collapse','.collapse', function() {
@@ -84,6 +100,13 @@ function registerEvent() {
       msgUtil.showWarn('Save fail');
     }
   };
+
+  $('#divVocabularyList').on('click', '.fa-thumbs-up', vocRemember);
+  $('#divVocabularyList').on('click', '.fa-question', vocForget);
+
+  sheetUtil.onSigned = function() {
+    loadVocabularyList();
+  }
 }
 
 var voices = [];
@@ -268,50 +291,15 @@ function setLocalVoice() {
       document.getElementById("btnPlay").innerText = 'Play';
       noSleep.disable();
   }  
-  
-  /**
-   * 清除快取
-   */
-  function reload() {
-    var spreadsheetId = settingUtil.getSpreadsheetId();
-    var range = settingUtil.getVocSheetName()+'!A2:S';
-    var todayStr = dateFns.format(new Date(), "YYYYMMDD");
-    var timeKey = spreadsheetId + '_' + range + '_time';
-    var dataKey = spreadsheetId + '_' + range + '_data';
-    localStorage.removeItem(timeKey);
-    localStorage.removeItem(dataKey);
-  }
-
-  async function loadGoogleSheetDataFromCache(spreadsheetId, range) {
-    var todayStr = dateFns.format(new Date(), "YYYYMMDD");
-    var timeKey = spreadsheetId + '_' + range + '_time';
-    var dataKey = spreadsheetId + '_' + range + '_data';
-    if(localStorage.getItem(timeKey) === todayStr) {
-      var dataSheet = JSON.parse(localStorage.getItem(dataKey));
-      return dataSheet;
-    }
-    //else if(isLocalhost()) {
-    //  return localTestData();
-    //}
-    else {
-      var response = await gapi.client.sheets.spreadsheets.values.get({
-        spreadsheetId: spreadsheetId,
-        range: range,
-      }); 
-  
-      var range = response.result; 
-      localStorage.setItem(dataKey, JSON.stringify(range.values));
-      localStorage.setItem(timeKey, todayStr);
-      return range.values;
-    }
-  }
 
   var vocabularyArr;
   async function loadVocabularyList() {
     try {
+      msgUtil.showInfo("Loading");
       var spreadsheetId = settingUtil.getSpreadsheetId();
       var range = settingUtil.getVocSheetName()+'!A2:S';
-      var sheetData = await loadGoogleSheetDataFromCache(spreadsheetId, range)
+      var rowDataList = await sheetUtil.loadSheetData(spreadsheetId, settingUtil.getVocSheetName(), range);
+      msgUtil.showInfo("Loaded");
       
       let sortMode = $('[name=btnSortMode]:checked').val();
       let filterMode = $('[name=btnFilterMode]:checked').val();
@@ -321,7 +309,9 @@ function setLocalVoice() {
         return row[columnIdx-1]||'';
       }
 
-      for(let row of sheetData) {
+      for(let rowData of rowDataList) {
+        let rowNum = rowData.rowNum;
+        let row = rowData.rowInfo;
         let phrase = getCellVal(row, columnMap.phrase);
         if(phrase==='') {
           continue;
@@ -436,9 +426,36 @@ function setLocalVoice() {
       $('#divVocabularyList').html(rendered);
     }
     catch(e) {
-      console.log(e);
+      msgUtil.showError(e.toString());
     }
   }
+
+  function vocRemember() {
+    var vocContainer = $(this).closest('.vocContainer')
+    var phrase = vocContainer.find('input[name=phrase]').val();
+    var rememberSeq = vocContainer.find('input[name=rememberSeq]').val();
+    trackVoc(phrase, rememberSeq + 1);
+  }
+
+  function vocForget() {
+    var vocContainer = $(this).closest('.vocContainer')
+    var phrase = vocContainer.find('input[name=phrase]').val();
+    trackVoc(phrase, 0);
+  }
+
+  function trackVoc(phrase, rememberSeq) {
+    msgUtil.showInfo(`Remember: ${phrase}: ${rememberSeq}`);
+    sheetUtil.addSyncQueue({syncType:'U', 
+                            spreadsheetId:settingUtil.getSpreadsheetId(), 
+                            sheetName:settingUtil.getVocSheetName(), 
+                            indexColumn:sheetUtil.colNumToChar(columnMap.phrase), 
+                            searchValue:phrase, 
+                            updateColFm:sheetUtil.colNumToChar(columnMap.lastReviewDate), 
+                            updateColTo:sheetUtil.colNumToChar(columnMap.rememberSeq), 
+                            setValueArr:[dateFns.format(new Date(), "M/D/YYYY H:mm:ss"), //11/13/2021 0:32:34
+                                         rememberSeq]})
+  }
+  
 
   var navUtil = (()=>{
     var thisUtil = {};
@@ -449,8 +466,6 @@ function setLocalVoice() {
   
       document.getElementById("divVocabulary").classList.remove('d-none');
       document.getElementById("divSetting").classList.add('d-none');
-  
-      loadVocabularyList();
     };
   
     thisUtil.navSettingShow = function() {
@@ -463,3 +478,5 @@ function setLocalVoice() {
   
     return thisUtil;
   })();  
+
+  

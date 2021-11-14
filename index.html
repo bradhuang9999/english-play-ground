@@ -8,7 +8,7 @@
     <!-- Bootstrap CSS -->
     <link href="libs/bootstrap/5.0.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="libs/bootstrap-dark-5/1.1.0/css/bootstrap-nightfall.css" rel="stylesheet" media="(prefers-color-scheme: dark)">
-
+    <link href="libs/fontawesome/5.15.4/css/all.min.css" rel="stylesheet">
     <title>Vocabulary List</title>
 
     <!-- PWA -->
@@ -26,18 +26,11 @@
   <body>   
    
     <div class="col-lg-8 mx-auto p-3 py-md-5">
-      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <nav class="navbar navbar-expand-lg navbar-light bg-dark">
         <div class="container-fluid">
           <a class="navbar-brand" href="#">
             <img src="images/icons/icon_128.png" width="30" height="30" class="d-inline-block align-top" alt="">
           </a>
-          <button id='btnSync' type="button" class="btn btn-outline-secondary position-relative" style="display: none;">
-            Sync
-            <span id='spanSyncNum' class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-              1
-            </span>
-          </button>
-
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
@@ -50,14 +43,19 @@
                 <a id='navSetting' class="nav-link" href="#">Setting</a>
               </li>
             </ul>
-            <div class="d-flex">
-              <button id="authorize_button" class="btn btn-outline-success" style="display: none;">Authorize</button>
-              <button id="signout_button" class="btn btn-outline-success" style="display: none;">Sign Out</button>
-              <button id="btnReload" class="btn btn-need-login btn-outline-success">Reload</button>
+            <div class="d-flex">              
+              <button id="btnSync" type="button" class="btn btn-outline-success">
+                Sync
+                <span class="badge bg-secondary"></span>
+              </button>                
+              <button id="btnAuthorize" type="button" class="btn btn-outline-success" style="display: none;">Authorize</button>
+              <button id="btnSignout" type="button" class="btn btn-outline-success" style="display: none;">Sign Out</button>
+              <button id="btnReload" type="button" class="btn btn-need-login btn-outline-success">Reload</button>
             </div>
           </div>
         </div>
-      </nav> 
+      </nav>
+      
       <main>
         <div id='divSetting' class="container d-none">
           <div class="mb-3">
@@ -141,9 +139,20 @@
           </button>
         </div>
       </div>
-      <div id="{{phrase}}VocDetail" class="row collapse hide">
+      <div id="{{phrase}}VocDetail" class="row collapse hide vocContainer">
         <div class="col-12">
           <div class="card card-body fs-5">
+            <div>
+              <span class="fa-stack btn-icon">
+                <i class="far fa-circle fa-stack-2x"></i>
+                <i class="fas fa-thumbs-up fa-stack-1x"></i>
+              </span> 
+              <span class="fa-stack btn-icon">
+                <i class="far fa-circle fa-stack-2x"></i>
+                <i class="fas fa-question fa-stack-1x"></i>
+              </span>     
+            </div>            
+            
             {{#if sentence}}
             <b>Sentence</b>
             {{{wrap sentence}}}
@@ -161,6 +170,7 @@
             {{{wrap translation}}}
             {{/if}}
             <input type='hidden' name='phrase' value='{{phrase}}'>
+            <input type='hidden' name='rememberSeq' value='{{rememberSeq}}'>
           </div>
         </div>
       </div>
@@ -174,12 +184,13 @@
     <script src="libs/bootstrap4-toggle/3.6.1/js/bootstrap4-toggle.min.js"></script>
     <script src="libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <script src="libs/handlebars/4.7.7/handlebars.min.js"></script>
+    <script src="libs/dexie/3.0.3/dexie.min.js"></script>
     <script src='js/common.js'></script>
     <script src='js/googleSheet.js'></script>
     <script src='js/index.js'></script>
     
     <script async defer src="https://apis.google.com/js/api.js"
-      onload="this.onload=function(){};handleClientLoad()"
+      onload="this.onload=function(){};sheetUtil.handleClientLoad()"
       onreadystatechange="if (this.readyState === 'complete') this.onload()">
     </script>
     <!-- Option 2: Separate Popper and Bootstrap JS -->
