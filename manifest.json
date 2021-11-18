@@ -10,7 +10,7 @@
       "sizes": "144x144",
       "type": "image/png"
     }, {
-      "src": "iimages/icons/icon_152.png",
+      "src": "images/icons/icon_152.png",
       "sizes": "152x152",
       "type": "image/png"
     }, {
@@ -29,6 +29,6 @@
   "lang": "en-US",
   "start_url": "index.html",
   "display": "standalone",
-  "background_color": "white",
-  "theme_color": "white"
+  "background_color": "#202124",
+  "theme_color": "#3b3b3b"
 }

@@ -77,13 +77,10 @@ function registerEvent() {
   document.getElementById("btnPlay").onclick = playMp3List;
   //document.getElementById("btnReload").onclick = reload;
 
+  //When open a collapse vacabulary, collapse others
   var divVocabularyList = $('#divVocabularyList');
   divVocabularyList.on('show.bs.collapse','.collapse', function() {
     divVocabularyList.find('.collapse.show').collapse('hide');
-  });
-  divVocabularyList.on('shown.bs.collapse', function(e) {
-    //debugger;
-    //$(e.target).prev()[0].focus();
   });
 
   document.getElementById("navVocabulary").onclick = navUtil.navVocabularyShow;
@@ -435,12 +432,14 @@ function setLocalVoice() {
     var phrase = vocContainer.find('input[name=phrase]').val();
     var rememberSeq = vocContainer.find('input[name=rememberSeq]').val();
     trackVoc(phrase, rememberSeq + 1);
+    vocContainer.nextAll('.collapse').eq(0).collapse('show');
   }
 
   function vocForget() {
     var vocContainer = $(this).closest('.vocContainer')
     var phrase = vocContainer.find('input[name=phrase]').val();
     trackVoc(phrase, 0);
+    vocContainer.nextAll('.collapse').eq(0).collapse('show');
   }
 
   function trackVoc(phrase, rememberSeq) {

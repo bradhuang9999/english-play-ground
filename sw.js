@@ -1,3 +1,4 @@
+//2021-11-18
 var FILE_STATIC_CACHE_KEY = 'staticFile';
 var staticFileArr = [
   './', // Alias for index.html
